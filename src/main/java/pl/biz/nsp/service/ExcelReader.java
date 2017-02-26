@@ -23,7 +23,10 @@ public class ExcelReader {
 
         Workbook sheets = getWorkbook(getInteractionFile());
         List<Interaction> interactions = new ArrayList<>();
+
         String orderNumber = "";
+        int counter = 0;
+        double amount;
 
         Random generator = new Random();
         long x = 10000000000000l;
@@ -35,45 +38,60 @@ public class ExcelReader {
 
             List<ProductInteraction> productInteractions = new ArrayList<>();
 
+
             if (row.getRowNum() == 0)
                 continue;
 
             if (orderNumber.equals(row.getCell(21).getStringCellValue())) {
-                interactions.get(row.getRowNum()).getProductInteractionList().add(ProductInteraction.ProductInteractionBuilder.aProductInteraction()
+
+                amount = row.getCell(5).getNumericCellValue();
+
+                interactions.get(counter - 1).getProductInteractionList().add(ProductInteraction.ProductInteractionBuilder.aProductInteraction()
                         .itemId(row.getCell(7).getStringCellValue())
                         .amount(row.getCell(5).getStringCellValue())
                         .itemType("Z_EOBUWIE_PRODUCT")
                         .quantity(row.getCell(0).getStringCellValue())
                         .zDiscountCode((row.getCell(19) != null) ? (row.getCell(19).getStringCellValue()) : "")
-                        .zSize(row.getCell(30).getStringCellValue())
-                        .zColor(row.getCell(15).getStringCellValue())
+                        .zSize((row.getCell(30) != null) ? (row.getCell(30).getStringCellValue()) : "")
+                        .zColor((row.getCell(15) != null) ? (row.getCell(15).getStringCellValue()) : "")
                         .build());
+
+                interactions.get(counter - 1).setAmount(amount + row.getCell(5).getNumericCellValue());
+
+                amount = 0;
+
+
+
                 continue;
+            } else {
+                productInteractions.add(ProductInteraction.ProductInteractionBuilder.aProductInteraction()
+                        .itemId(row.getCell(7).getStringCellValue())
+                        .amount(row.getCell(5).getStringCellValue())
+                        .itemType("Z_EOBUWIE_PRODUCT")
+                        .quantity(row.getCell(0).getStringCellValue())
+                        .zDiscountCode((row.getCell(19) != null) ? (row.getCell(19).getStringCellValue()) : "")
+                        .zSize((row.getCell(30) != null) ? (row.getCell(30).getStringCellValue()) : "")
+                        .zColor((row.getCell(15) != null) ? (row.getCell(15).getStringCellValue()) : "")
+                        .build());
+
+                interactions.add(new Interaction.Builder()
+                        .key(row.getCell(21).getStringCellValue())
+                        .sourceObjectId(row.getCell(21).getStringCellValue())
+                        .contactId(row.getCell(22).getStringCellValue())
+                        .amount(row.getCell(5).getNumericCellValue())
+                        .currency("PLN")
+                        .interactionType("SALES_ORDER")
+                        .communicationMedium("BUSINESS_DOCUMENT")
+                        .timestamp("/Date(" + timestamp + ")/")
+                        .productInteractionList(productInteractions)
+                        .build());
             }
 
-            productInteractions.add(ProductInteraction.ProductInteractionBuilder.aProductInteraction()
-                    .itemId(row.getCell(7).getStringCellValue())
-                    .amount(row.getCell(5).getStringCellValue())
-                    .itemType("Z_EOBUWIE_PRODUCT")
-                    .quantity(row.getCell(0).getStringCellValue())
-                    .zDiscountCode((row.getCell(19) != null) ? (row.getCell(19).getStringCellValue()) : "")
-                    .zSize(row.getCell(30).getStringCellValue())
-                    .zColor(row.getCell(15).getStringCellValue())
-                    .build());
-
-            interactions.add(new Interaction.Builder()
-                    .key(row.getCell(21).getStringCellValue())
-                    .sourceObjectId(row.getCell(21).getStringCellValue())
-                    .contactId(row.getCell(22).getStringCellValue())
-                    .amount("") //TODO do zaimplementowania logika
-                    .interactionType("SALES_ORDER")
-                    .communicationMedium("BUSINESS_DOCUMENT")
-                    .timestamp("/Date(" + timestamp + ")/")
-                    .productInteractionList(productInteractions)
-                    .build());
 
             orderNumber = row.getCell(21).getStringCellValue();
+            counter++;
         }
+
         return interactions;
     }
 
@@ -165,7 +183,8 @@ public class ExcelReader {
     }
 
     private File getInteractionFile() {
-        return new File("C:\\Users\\Asus\\Desktop\\eObuwie\\Sample_data\\magento_sample_data_interaction_sort.xlsx");
+        return new File("/home/piotr/soft/eObuwie/transactional_data_new.xlsx");
+        //return new File("C:\\Users\\Asus\\Desktop\\eObuwie\\Sample_data\\magento_sample_data_interaction_sort.xlsx");
     }
 
     private Workbook getWorkbook(File file) throws Exception {

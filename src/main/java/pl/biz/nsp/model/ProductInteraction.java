@@ -1,17 +1,27 @@
 package pl.biz.nsp.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author Piotr Larys
  */
 public class ProductInteraction {
 
+    @JsonProperty("ItemId")
     private String itemId;
+    @JsonProperty("ItemType")
     private String itemType;
+    @JsonProperty("Amount")
     private String amount;
+    @JsonProperty("Quantity")
     private String quantity;
+    @JsonProperty("ZSIZE")
     private String zSize;
+    @JsonProperty("ZCOLOR")
     private String zColor;
+    @JsonProperty("ZDISCOUNTCODE")
     private String zDiscountCode;
+    @JsonProperty("ZDISCOUNTREGULAR")
     private String zDiscountRegular;
 
     public String getItemId() {
