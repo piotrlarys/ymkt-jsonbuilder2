@@ -1,5 +1,6 @@
 package pl.biz.nsp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.jmx.snmp.Timestamp;
 
@@ -12,25 +13,26 @@ public class Interaction {
 
     @JsonProperty("Key")
     private String key;
-
+    @JsonProperty("SourceObjectId")
     private String sourceObjectId;
-
+    @JsonProperty("IdOrigin")
     private String idOrigin;
-
-    private Timestamp timestamp;
-
+    @JsonProperty("Timestamp")
+    private String timestamp;
+    @JsonProperty("InteractionType")
     private String interactionType;
-
+    @JsonProperty("CommunicationMedium")
     private String communicationMedium;
-
+    @JsonProperty("ContactId")
     private String contactId;
-
+    @JsonProperty("Amount")
     private String amount;
-
+    @JsonProperty("Currency")
     private String currency;
-
+    @JsonProperty("Products")
     private List<ProductInteraction> productInteractionList;
-
+    @JsonProperty("Interests")
+    @JsonIgnore
     private List<InterestInteraction> interestInteractionList;
 
     private Interaction() {
@@ -66,7 +68,7 @@ public class Interaction {
         return idOrigin;
     }
 
-    public Timestamp getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
@@ -106,7 +108,7 @@ public class Interaction {
 
         private String idOrigin;
 
-        private Timestamp timestamp;
+        private String timestamp;
 
         private String interactionType;
 
@@ -140,7 +142,7 @@ public class Interaction {
             return this;
         }
 
-        public Builder timestamp(Timestamp timestamp) {
+        public Builder timestamp(String timestamp) {
             this.timestamp = timestamp;
             return this;
         }

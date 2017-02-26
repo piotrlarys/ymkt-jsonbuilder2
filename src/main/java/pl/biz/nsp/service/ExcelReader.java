@@ -4,10 +4,7 @@ import com.monitorjbl.xlsx.StreamingReader;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
-import pl.biz.nsp.model.Contact;
-import pl.biz.nsp.model.Interaction;
-import pl.biz.nsp.model.Product;
-import pl.biz.nsp.model.ProductCategory;
+import pl.biz.nsp.model.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,12 +25,41 @@ public class ExcelReader {
         List<Interaction> interactions = new ArrayList<>();
         String orderNumber = "";
 
+        Random generator = new Random();
+        long x = 10000000000000l;
+
         for (Row row : sheets.getSheetAt(0)) {
+
+            long timestamp = new Timestamp(System.currentTimeMillis()).getTime();
+            timestamp = timestamp + generator.nextLong() / x;
+
+            List<ProductInteraction> productInteractions = new ArrayList<>();
+
             if (row.getRowNum() == 0)
                 continue;
+
             if (orderNumber.equals(row.getCell(21).getStringCellValue())) {
+                interactions.get(row.getRowNum()).getProductInteractionList().add(ProductInteraction.ProductInteractionBuilder.aProductInteraction()
+                        .itemId(row.getCell(7).getStringCellValue())
+                        .amount(row.getCell(5).getStringCellValue())
+                        .itemType("Z_EOBUWIE_PRODUCT")
+                        .quantity(row.getCell(0).getStringCellValue())
+                        .zDiscountCode((row.getCell(19) != null) ? (row.getCell(19).getStringCellValue()) : "")
+                        .zSize(row.getCell(30).getStringCellValue())
+                        .zColor(row.getCell(15).getStringCellValue())
+                        .build());
                 continue;
             }
+
+            productInteractions.add(ProductInteraction.ProductInteractionBuilder.aProductInteraction()
+                    .itemId(row.getCell(7).getStringCellValue())
+                    .amount(row.getCell(5).getStringCellValue())
+                    .itemType("Z_EOBUWIE_PRODUCT")
+                    .quantity(row.getCell(0).getStringCellValue())
+                    .zDiscountCode((row.getCell(19) != null) ? (row.getCell(19).getStringCellValue()) : "")
+                    .zSize(row.getCell(30).getStringCellValue())
+                    .zColor(row.getCell(15).getStringCellValue())
+                    .build());
 
             interactions.add(new Interaction.Builder()
                     .key(row.getCell(21).getStringCellValue())
@@ -42,6 +68,8 @@ public class ExcelReader {
                     .amount("") //TODO do zaimplementowania logika
                     .interactionType("SALES_ORDER")
                     .communicationMedium("BUSINESS_DOCUMENT")
+                    .timestamp("/Date(" + timestamp + ")/")
+                    .productInteractionList(productInteractions)
                     .build());
 
             orderNumber = row.getCell(21).getStringCellValue();
@@ -89,13 +117,12 @@ public class ExcelReader {
     public List<Product> createProducts() throws Exception {
 
         List<Product> products = new ArrayList<>();
-        List<ProductCategory> productCategories = new ArrayList<>();
-
-
         Workbook sheets = getWorkbook(getProductFile());
 
-
         for (Row row : sheets.getSheetAt(0)) {
+
+            List<ProductCategory> productCategories = new ArrayList<>();
+
             if (row.getRowNum() == 0)
                 continue;
 
@@ -138,7 +165,7 @@ public class ExcelReader {
     }
 
     private File getInteractionFile() {
-        return new File("C:\\Users\\Asus\\Desktop\\eObuwie\\Sample_data\\magento_sample_data_product_sort.xlsx");
+        return new File("C:\\Users\\Asus\\Desktop\\eObuwie\\Sample_data\\magento_sample_data_interaction_sort.xlsx");
     }
 
     private Workbook getWorkbook(File file) throws Exception {

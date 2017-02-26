@@ -24,7 +24,7 @@ public class JsonController {
 
     @GetMapping("/interaction")
     public @ResponseBody List<Interaction> interactions() throws Exception {
-        return null;
+        return excelReader.createInteraction();
     }
 
     @GetMapping("/contact")
