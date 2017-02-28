@@ -15,7 +15,7 @@ public class Interaction {
     private String key;
     @JsonProperty("SourceObjectId")
     private String sourceObjectId;
-    @JsonProperty("IdOrigin")
+    @JsonProperty("ContactIdOrigin")
     private String idOrigin;
     @JsonProperty("Timestamp")
     private String timestamp;
@@ -26,12 +26,15 @@ public class Interaction {
     @JsonProperty("ContactId")
     private String contactId;
     @JsonProperty("Amount")
-    private double amount;
+    private String amount;
     @JsonProperty("Currency")
     private String currency;
     @JsonProperty("Products")
     private List<ProductInteraction> productInteractionList;
-    @JsonProperty("Interests")
+
+
+    //@JsonProperty("Interests")
+    @JsonIgnore
     private List<InterestInteraction> interestInteractionList;
 
     private Interaction() {
@@ -60,7 +63,7 @@ public class Interaction {
         return this;
     }
 
-    public Interaction setAmount(Double amount) {
+    public Interaction setAmount(String amount) {
         this.amount = amount;
         return this;
     }
@@ -93,7 +96,7 @@ public class Interaction {
         return contactId;
     }
 
-    public Double getAmount() {
+    public String getAmount() {
         return amount;
     }
 
@@ -125,7 +128,7 @@ public class Interaction {
 
         private String contactId;
 
-        private Double amount;
+        private String amount;
 
         private String currency;
 
@@ -171,7 +174,7 @@ public class Interaction {
             return this;
         }
 
-        public Builder amount(Double amount) {
+        public Builder amount(String amount) {
             this.amount = amount;
             return this;
         }

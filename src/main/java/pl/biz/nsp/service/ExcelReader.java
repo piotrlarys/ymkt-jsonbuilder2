@@ -26,7 +26,7 @@ public class ExcelReader {
 
         String orderNumber = "";
         int counter = 0;
-        double amount;
+        double amount = 0;
 
         Random generator = new Random();
         long x = 10000000000000l;
@@ -44,30 +44,31 @@ public class ExcelReader {
 
             if (orderNumber.equals(row.getCell(21).getStringCellValue())) {
 
-                amount = row.getCell(5).getNumericCellValue();
+
+                interactions.get(counter - 1).setAmount(String.valueOf((amount + row.getCell(5).getNumericCellValue())));
 
                 interactions.get(counter - 1).getProductInteractionList().add(ProductInteraction.ProductInteractionBuilder.aProductInteraction()
                         .itemId(row.getCell(7).getStringCellValue())
-                        .amount(row.getCell(5).getStringCellValue())
+                        .amount(String.valueOf(row.getCell(5).getNumericCellValue()))
                         .itemType("Z_EOBUWIE_PRODUCT")
+                        .SourceSystemId("MAGENTO_MERCH_SHOP")
                         .quantity(row.getCell(0).getStringCellValue())
                         .zDiscountCode((row.getCell(19) != null) ? (row.getCell(19).getStringCellValue()) : "")
                         .zSize((row.getCell(30) != null) ? (row.getCell(30).getStringCellValue()) : "")
                         .zColor((row.getCell(15) != null) ? (row.getCell(15).getStringCellValue()) : "")
                         .build());
 
-                interactions.get(counter - 1).setAmount(amount + row.getCell(5).getNumericCellValue());
 
                 amount = 0;
-
 
 
                 continue;
             } else {
                 productInteractions.add(ProductInteraction.ProductInteractionBuilder.aProductInteraction()
                         .itemId(row.getCell(7).getStringCellValue())
-                        .amount(row.getCell(5).getStringCellValue())
+                        .amount(String.valueOf(row.getCell(5).getNumericCellValue()))
                         .itemType("Z_EOBUWIE_PRODUCT")
+                        .SourceSystemId("MAGENTO_MERCH_SHOP")
                         .quantity(row.getCell(0).getStringCellValue())
                         .zDiscountCode((row.getCell(19) != null) ? (row.getCell(19).getStringCellValue()) : "")
                         .zSize((row.getCell(30) != null) ? (row.getCell(30).getStringCellValue()) : "")
@@ -77,14 +78,17 @@ public class ExcelReader {
                 interactions.add(new Interaction.Builder()
                         .key(row.getCell(21).getStringCellValue())
                         .sourceObjectId(row.getCell(21).getStringCellValue())
+                        .idOrigin("Z_EOBUWIE_CONSUMER")
                         .contactId(row.getCell(22).getStringCellValue())
-                        .amount(row.getCell(5).getNumericCellValue())
+                        .amount(String.valueOf((row.getCell(5).getNumericCellValue())))
                         .currency("PLN")
                         .interactionType("SALES_ORDER")
                         .communicationMedium("BUSINESS_DOCUMENT")
                         .timestamp("/Date(" + timestamp + ")/")
                         .productInteractionList(productInteractions)
                         .build());
+
+                amount = row.getCell(5).getNumericCellValue();
             }
 
 
@@ -147,12 +151,16 @@ public class ExcelReader {
             if (row.getCell(11) != null) {
                 productCategories.add(new ProductCategory.Builder()
                         .Name(row.getCell(11).getStringCellValue())
+                        .Id(row.getCell(32).getStringCellValue())
+                        .HierarchyId("MagentoProducts")
                         .builder());
             }
 
             if (row.getCell(12) != null) {
                 productCategories.add(new ProductCategory.Builder()
                         .Name(row.getCell(12).getStringCellValue())
+                        .Id(row.getCell(32).getStringCellValue())
+                        .HierarchyId("MagentoProducts")
                         .builder());
             }
 
@@ -166,7 +174,7 @@ public class ExcelReader {
                     .zPremium((row.getCell(16) != null) ? (row.getCell(16).getStringCellValue()) : "")
                     .zSeazon((row.getCell(18) != null) ? (row.getCell(18).getStringCellValue()) : "")
                     .zSeries((row.getCell(17) != null) ? (row.getCell(17).getStringCellValue()) : "")
-                    .ProductCategoryList(productCategories)
+                    //.ProductCategoryList(productCategories)
                     .build());
         }
 
@@ -183,8 +191,8 @@ public class ExcelReader {
     }
 
     private File getInteractionFile() {
-        return new File("/home/piotr/soft/eObuwie/transactional_data_new.xlsx");
-        //return new File("C:\\Users\\Asus\\Desktop\\eObuwie\\Sample_data\\magento_sample_data_interaction_sort.xlsx");
+        //return new File("/home/piotr/soft/eObuwie/transactional_data_new.xlsx");
+        return new File("C:\\Users\\Asus\\Desktop\\eObuwie\\Sample_data\\magento_sample_data_interaction_sort.xlsx");
     }
 
     private Workbook getWorkbook(File file) throws Exception {

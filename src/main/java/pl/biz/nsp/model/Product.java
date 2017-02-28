@@ -1,5 +1,6 @@
 package pl.biz.nsp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -27,7 +28,8 @@ public class Product {
     private String zSeries;
     @JsonProperty("ZSEAZON")
     private String zSeazon;
-    @JsonProperty("ProductCategories")
+    //@JsonProperty("ProductCategories")
+    @JsonIgnore
     private List<ProductCategory> productCategoryList;
     
     private Product(){}

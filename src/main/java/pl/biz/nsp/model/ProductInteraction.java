@@ -1,5 +1,6 @@
 package pl.biz.nsp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -15,13 +16,16 @@ public class ProductInteraction {
     private String amount;
     @JsonProperty("Quantity")
     private String quantity;
+    @JsonProperty("SourceSystemId")
+    private String sourceSystemId;
     @JsonProperty("ZSIZE")
     private String zSize;
     @JsonProperty("ZCOLOR")
     private String zColor;
-    @JsonProperty("ZDISCOUNTCODE")
+    @JsonProperty("ZDISCOUNT_CODE")
     private String zDiscountCode;
-    @JsonProperty("ZDISCOUNTREGULAR")
+    //@JsonProperty("ZDISCOUNTREGULAR")
+    @JsonIgnore
     private String zDiscountRegular;
 
     public String getItemId() {
@@ -65,6 +69,7 @@ public class ProductInteraction {
         private String zColor;
         private String zDiscountCode;
         private String zDiscountRegular;
+        private String sourceSystemId;
 
         private ProductInteractionBuilder() {
         }
@@ -113,6 +118,11 @@ public class ProductInteraction {
             return this;
         }
 
+        public ProductInteractionBuilder SourceSystemId(String sourceSystemId) {
+            this.sourceSystemId = sourceSystemId;
+            return this;
+        }
+
         public ProductInteractionBuilder but() {
             return aProductInteraction().itemId(itemId).itemType(itemType).amount(amount).quantity(quantity).zSize(zSize).zColor(zColor).zDiscountCode(zDiscountCode).zDiscountRegular(zDiscountRegular);
         }
@@ -127,6 +137,7 @@ public class ProductInteraction {
             productInteraction.amount = this.amount;
             productInteraction.zDiscountRegular = this.zDiscountRegular;
             productInteraction.itemType = this.itemType;
+            productInteraction.sourceSystemId = this.sourceSystemId;
             return productInteraction;
         }
     }
